@@ -129,7 +129,9 @@ openshift_clock_enabled=True
 osm_cluster_network_cidr=10.1.0.0/16
 openshift_portal_net=172.30.0.0/16
 
-# os_sdn_network_plugin_name='redhat/openshift-ovs-networkpolicy'
+{% if ocp_sdn_plugin is defined %}
+os_sdn_network_plugin_name={{ ocp_sdn_plugin }}
+{% endif %}
 {{multi_tenant_setting}}
 
 ###########################################################################
