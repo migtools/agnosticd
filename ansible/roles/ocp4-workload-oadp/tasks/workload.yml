@@ -175,10 +175,10 @@
         state: "{{ oadp_state }}"
         definition: "{{ lookup('template', 'cloud-credentials.yml.j2') }}"
 
-    - name: Creating velero CR with Noobaa S3
+    - name: Creating DataProtectionApplication CR with Noobaa S3
       k8s:
         state: "{{ oadp_state }}"
-        definition: "{{ lookup('template', 'velero.yml.j2') }}"
+        definition: "{{ lookup('template', 'dpa.yml.j2') }}"
 
 # Leave this as the last task in the playbook.
 - name: workload tasks complete
