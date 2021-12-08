@@ -51,15 +51,28 @@
         student_name={{ student_name }}
         bastion={{ hostvars[groups.bastions.0].ansible_hostname }}.{{ guid }}{{ subdomain_base_suffix }}
       dest: "/home/{{ student_name }}/cluster.info"
+      mode: "644"
     become: true
 
   - name: Get Konveyor lab git
     git:
       repo: "{{ bookbag_repo }}"
       dest: "{{ bookbag_dir }}"
+      version: master
     become: true
     become_user: "{{ student_name }}"
-
+  - name: create .aws dir
+    file:
+      owner: "{{ student_name }}"
+      state: directory
+      path: "{{ bookbag_dir }}/{{ bookbag_build_dir }}/.aws"
+      mode: "644"
+  - name: create .aws/credentials file to noobaa s3
+    copy:
+      owner: "{{ student_name }}"
+      content: "{{ cloud_credentials_data_string }}"
+      dest: "{{ bookbag_dir }}/{{ bookbag_build_dir }}/.aws/credentials"
+      mode: "644"
   - name: Create project
     k8s:
       state: present
