@@ -60,7 +60,7 @@
     file:
       state: directory
       path: "{{ bookbag_dir }}/{{ bookbag_build_dir }}/.aws"
-      mode: "644"
+      mode: "755"
       owner: "{{ ansible_user }}"
   - name: create .aws/credentials file to noobaa s3
     copy:
