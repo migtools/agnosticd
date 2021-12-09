@@ -61,7 +61,6 @@
       state: directory
       path: "{{ bookbag_dir }}/{{ bookbag_build_dir }}/.aws"
       mode: "755"
-      owner: "{{ ansible_user }}"
   - name: create .aws/credentials file to noobaa s3
     copy:
       content: "{{ cloud_credentials_data_string }}"
@@ -76,7 +75,15 @@
         apiVersion: project.openshift.io/v1
         metadata:
           name: lab-instructions
-
+  - set_fact:
+      ocp4_info:
+        ocp4_guid: "{{ guid | default('guid') }}"
+        ocp4_domain: "{{ subdomain_base_suffix | default('subdomain_base_suffix')}}"
+        ocp4_ssh_user: "{{ student_name | default('ec2-user') }}"
+        ocp4_password: "{{ student_password | default('undefined')}}"
+        ocp4_bastion:
+          "{{ ansible_hostname | default('bastion') }}.{{ guid | default('guid') }}
+          {{ subdomain_base_suffix | default('subdomain_base_suffix') }}"
   - name: "Building bookbag image"
     shell: "{{ item }}"
     args:
