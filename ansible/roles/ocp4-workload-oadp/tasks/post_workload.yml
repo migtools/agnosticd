@@ -61,11 +61,13 @@
       state: directory
       path: "{{ bookbag_dir }}/{{ bookbag_build_dir }}/.aws"
       mode: "644"
+      owner: "{{ ansible_user }}"
   - name: create .aws/credentials file to noobaa s3
     copy:
       content: "{{ cloud_credentials_data_string }}"
       dest: "{{ bookbag_dir }}/{{ bookbag_build_dir }}/.aws/credentials"
-      mode: "644"
+      
+
   - name: Create project
     k8s:
       state: present
