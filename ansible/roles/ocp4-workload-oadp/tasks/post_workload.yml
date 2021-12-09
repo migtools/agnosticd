@@ -82,14 +82,17 @@
       name: console
       namespace: openshift-console
     register: openshiftconsole_results
+  - command: oc whoami --show-server
+    register: api_url_results
   - set_fact:
-      console_url: "{{ openshiftconsole.resources[0].status.ingress[0].host }}"
+      console_url: "{{ openshiftconsole_results.resources[0].status.ingress[0].host }}"
   - set_fact:
       apps_url: "{{ console_url | regex_replace('console-openshift-console.','') }}"
   - set_fact:
       ocp4_info:
         apps_url: "{{ apps_url | default('appsurl') }}"
         cluster_admin_user: "{{ cluster_admin_user | default('kubeadmin') }}"
+        api_url: "{{ api_url_results.stdout }}"
         ocp4_password: "{{ student_password | default('undefined')}}"
   - name: "Building bookbag image"
     shell: "{{ item }}"
