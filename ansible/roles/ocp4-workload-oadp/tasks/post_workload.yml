@@ -97,13 +97,7 @@
     args:
       chdir: "{{ bookbag_dir }}/{{ bookbag_build_dir }}"
 
-  - name: "Read bookbag route"
-    shell: "oc get route -n lab-instructions bookbag
-      -o go-template='{{ '{{' }} .spec.host {{ '}}' }}{{ '{{' }} println {{ '}}' }}'"
-    register: output
 
-  - debug:
-      msg: "Route to bookbag : {{ output.stdout }}"
 
   - agnosticd_user_info:
       data:
@@ -118,6 +112,13 @@
 
   - debug:
       var: results
+
+  - name: "Read bookbag route"
+    shell: "oc get route -n lab-instructions bookbag
+      -o go-template='{{ '{{' }} .spec.host {{ '}}' }}{{ '{{' }} println {{ '}}' }}'"
+    register: output
+  - debug:
+      msg: "Route to bookbag : {{ output.stdout }}"
 
 # For deployment onto a dedicated cluster (as part of the
 # cluster deployment) set workload_shared_deployment to False
