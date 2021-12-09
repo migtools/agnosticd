@@ -65,7 +65,7 @@
     copy:
       content: "{{ cloud_credentials_data_string }}"
       dest: "{{ bookbag_dir }}/{{ bookbag_build_dir }}/.aws/credentials"
-      
+      mode: 755
 
   - name: Create project
     k8s:
@@ -75,10 +75,21 @@
         apiVersion: project.openshift.io/v1
         metadata:
           name: lab-instructions
+  - name: Discovering Console URL
+    k8s_info:
+      api_version: route.openshift.io/v1
+      kind: Route
+      name: console
+      namespace: openshift-console
+    register: openshiftconsole_results
+  - set_fact:
+      console_url: "{{ openshiftconsole.resources[0].status.ingress[0].host }}"
+  - set_fact:
+      apps_url: "{{ console_url | regex_replace('console-openshift-console.','') }}"
   - set_fact:
       ocp4_info:
-        ocp4_guid: "{{ guid | default('guid') }}"
-        ocp4_domain: "{{ subdomain_base_suffix | default('subdomain_base_suffix')}}"
+        apps_url: "{{ apps_url | default('appsurl') }}"
+        cluster_admin_user: "{{ cluster_admin_user | default('kubeadmin') }}"
         ocp4_password: "{{ student_password | default('undefined')}}"
   - name: "Building bookbag image"
     shell: "{{ item }}"
