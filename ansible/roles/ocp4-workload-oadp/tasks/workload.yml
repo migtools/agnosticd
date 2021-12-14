@@ -43,7 +43,7 @@
           kind: InstallPlan
           metadata:
             name: "{{ oadp_install_plans.resources[0].metadata.name }}"
-            namespace: openshift-adp
+            namespace: "{{ oadp_namespace }}"
           spec:
             approval: Manual
             approved: false
