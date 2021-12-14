@@ -46,7 +46,7 @@
             namespace: "{{ oadp_namespace }}"
           spec:
             approval: Manual
-            approved: false
+            approved: true
       register: result
       retries: 20
       until: result is not failed
