@@ -17,40 +17,8 @@
     ansible_hostname: "{{ hostvars[groups.bastions.0].ansible_hostname }}"
   when: groups.bastions is defined
 
-# - name: Disable ansible virtualenv to install sshpass package
-#   # RHEL8 uses a 3.8 python interpreter which does not have a dnf python module needed
-#   # to run the installation of required packages from within current virtualenv. Need to switch
-#   # to the python3 RHEL8 interpreter to avoid errors. Not switching for older RHELs.
-#   set_fact:
-#     ansible_python_interpreter: /usr/bin/python3
-#     __save_ansible_python_interpreter: "{{ ansible_python_interpreter }}"
-#   when: hostvars[groups.bastions.0].ansible_distribution_major_version is version('8', '>=')
-
-# - name: "Install Ansible - needed for bookbag deployment from bastion"
-#   become: true
-#   package:
-#     name:
-#     - ansible
-#     state: latest
-
-# - name: Reenable ansible virtualenv
-#   set_fact:
-#     ansible_python_interpreter: "{{ __save_ansible_python_interpreter }}"
-#   when: hostvars[groups.bastions.0].ansible_distribution_major_version is version('8', '>=')
-
 - name: Get oadp lab bookbag
   block:
-  # - name: "Saving OCP4 cluster info for bookbag deployment"
-  #   copy:
-  #     content: |
-  #       [OCP4]
-  #       guid={{ guid }}
-  #       domain={{ subdomain_base_suffix }}
-  #       bastion={{ hostvars[groups.bastions.0].ansible_hostname }}.{{ guid }}{{ subdomain_base_suffix }}
-  #     dest: "/home/{{ student_name }}/cluster.info"
-  #     mode: "644"
-  #   become: true
-
   - name: Get Konveyor lab git
     git:
       repo: "{{ bookbag_repo }}"
@@ -107,8 +75,6 @@
     args:
       chdir: "{{ bookbag_dir }}/{{ bookbag_build_dir }}"
 
-
-
   - agnosticd_user_info:
       data:
         bookbag_route: output.stdout
@@ -127,8 +93,14 @@
     shell: "oc get route -n lab-instructions bookbag
       -o go-template='{{ '{{' }} .spec.host {{ '}}' }}{{ '{{' }} println {{ '}}' }}'"
     register: output
-  - debug:
-      msg: "Route to bookbag : {{ output.stdout }}"
+
+  - agnosticd_user_info:
+      msg: "{{ item }}"
+    loop:
+    - ""
+    - "Your Bookbag Lab instructions are located at:"
+    - " {{ output.stdout }}"
+    - ""
 
 # For deployment onto a dedicated cluster (as part of the
 # cluster deployment) set workload_shared_deployment to False
