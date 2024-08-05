@@ -6,12 +6,10 @@
 
 - name: rhn | Force unregister before register
   command: "{{ item }}"
-  args:
-    warn: false
   loop:
     - 'subscription-manager remove --all'
     - 'subscription-manager clean'
-    - 'yum remove -y "katello-ca-consumer-*"'
+    - 'yum remove -y "katello-ca-consumer-*" rh-amazon-rhui-client'
 
 # Registering without activationkey
 - name: rhn | Register system using Red Hat Subscription Manager
